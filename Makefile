@@ -1,11 +1,11 @@
-ARCH_DIR=src/kernel/arch/i386
+ARCH_DIR:=src/kernel/arch/i386
 
-AS=nasm -felf
-CC=i686-elf-gcc
+AS:=nasm -felf
+CC:=i686-elf-gcc
 
-CFLAGS=-ffreestanding -O2 -std=c11 -Wall -Wextra
-ASFLAGS=
-LDFLAGS=-ffreestanding -O2 -nostdlib -lgcc
+CFLAGS:=-ffreestanding -O2 -std=c11 -Wall -Wextra
+ASFLAGS:=
+LDFLAGS:=-ffreestanding -O2 -nostdlib -lgcc
 
 .PHONY: clean install install-headers iso
 
@@ -29,8 +29,8 @@ os-0.bin: boot.o kernel.o
 boot.o:
 	$(AS) $(ASFLAGS) -o $@ src/kernel/arch/i386/boot.s 
 
-kernel.o:
-	$(CC) $(CFLAGS) -c src/kernel/kernel.c -o $@
+kernel.o: install-headers
+	$(CC) $(CFLAGS) -Isysroot/usr/include -c src/kernel/kernel.c -o $@
 
 clean:
 	rm -f os-0.bin boot.o kernel.o *.iso

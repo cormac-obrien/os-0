@@ -70,7 +70,16 @@ void kernel_putchar(const char c) {
 
 void kernel_puts(const char * const str) {
     for(size_t i = 0; i < strlen(str); ++i) {
-        kernel_putchar(str[i]);
+        switch(str[i]) {
+            case '\n':
+                if(++_vga_row == VGA_ROWS) {
+                    _vga_row = 0;
+                }
+                _vga_col = 0;
+                break;
+            default:
+                kernel_putchar(str[i]);
+        }
     }
 }
 
