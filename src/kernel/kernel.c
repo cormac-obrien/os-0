@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef enum vga_color_t {
     C_BLK  =  0, C_BLU  =  1, C_GRN  =  2, C_CYN  =  3,

@@ -1,4 +1,6 @@
 sysroot/
+*.a
 *.bin
 *.iso
+*.o
 *.swp
