@@ -19,23 +19,31 @@ CRTBEGIN_OBJ:=$(shell $(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=crtbegin.o)
 CRTEND_OBJ:=$(shell $(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=crtend.o)
 CRTN_OBJ:=$(ARCH_DIR)/crtn.o
 
-LIBC_OBJS:=strlen.o
+LIBC_OBJS:=\
+src/libc/string/strlen.o \
 
 # ARCHITECTURE-SPECIFIC KERNEL COMPONENTS
 KERNEL_ARCH_OBJS:=\
-$(ARCH_DIR)/boot.o
+$(ARCH_DIR)/boot.o \
 
 # ALL KERNEL COMPONENTS
-OBJS:=\
+KERNEL_OBJS:=\
 $(KERNEL_ARCH_OBJS) \
 src/kernel/kernel.o
 
-# LINKING ORDER OF GLOBAL CONSTRUCTORS AND KERNEL COMPONENTS
+# Objects to be linked into the final kernel
 OBJ_LINK_LIST:=\
 $(CRTI_OBJ) \
 $(CRTBEGIN_OBJ) \
-$(OBJS) \
+$(KERNEL_OBJS) \
 $(CRTEND_OBJ) \
+$(CRTN_OBJ) \
+
+# Objects to be remove by `clean`
+OBJS_FOR_DELETION:=\
+$(LIBC_OBJS) \
+$(KERNEL_OBJS) \
+$(CRTI_OBJ) \
 $(CRTN_OBJ) \
 
 .PHONY: clean install install-headers iso
@@ -58,7 +66,11 @@ install-headers:
 libc.a: $(LIBC_OBJS)
 	$(AR) rvs $@ $(LIBC_OBJS)
 
-install: install-headers os-0.bin libc.a
+install-libs: libc.a $(LIBC_OBJS)
+	mkdir -p sysroot/lib
+	mv libc.a sysroot/lib/
+
+install: install-headers install-libs os-0.bin
 	mkdir -p sysroot/boot/grub
 	cp res/iso/efi.img sysroot/
 	cp os-0.bin sysroot/boot/
@@ -67,9 +79,10 @@ install: install-headers os-0.bin libc.a
 iso: install
 	grub-mkrescue -o os-0.iso sysroot/
 
-os-0.bin: $(OBJS)
+os-0.bin: $(OBJ_LINK_LIST)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^
-	rm -f boot.o kernel.o
+
+# GENERIC TARGETS ==============================================================
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -77,11 +90,8 @@ os-0.bin: $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-strlen.o:
-	$(CC) $(CFLAGS) -c src/libc/string/strlen.c -o $@
-
 # UTILITY TARGETS ==============================================================
 
 clean:
-	rm -f os-0.bin *.o */*.o */*/*.o */*/*/*.o */*/*/*/*.o *.iso *.a
+	rm -f os-0.bin $(OBJS_FOR_DELETION) *.iso *.a
 	rm -rf sysroot/

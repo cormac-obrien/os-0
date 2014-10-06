@@ -20,6 +20,12 @@ global _start
 _start:
     mov esp, stack_top
 
+    extern kernel_early
+    call kernel_early
+
+    extern _init
+    call _init
+
     extern kernel_main
     call kernel_main
     

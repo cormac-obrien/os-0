@@ -84,7 +84,10 @@ void kernel_puts(const char * const str) {
     }
 }
 
-void kernel_main() {
+void kernel_early() {
     vga_init();
+}
+
+void kernel_main() {
     kernel_puts("Hello, world!\n");
 }
