@@ -13,7 +13,7 @@ ASFLAGS:=
 
 # Compiler and linker settings
 CC:=i686-elf-gcc
-CFLAGS:=-ffreestanding -O2 -std=c11 -Wall -Wextra --sysroot=sysroot/ -isystem=/usr/include
+CFLAGS:=-ffreestanding -O2 -std=c11 -Wall -Wextra --sysroot=sysroot/ -isystem=usr/include
 LIBK_CFLAGS:=$(CFLAGS) -ffreestanding -fbuiltin
 LDFLAGS:=-ffreestanding -O2 -nostdlib -lgcc
 
@@ -23,22 +23,32 @@ CRTBEGIN_OBJ:=$(shell $(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=crtbegin.o)
 CRTEND_OBJ:=$(shell $(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=crtend.o)
 CRTN_OBJ:=$(ARCH_DIR)/crtn.o
 
-HOSTED_OBJS:=\
+# libc objects with system dependencies
+HOSTED_LIBC_OBJS:=\
 
-FREE_OBJS:=\
+# libc objects with no system dependencies
+FREE_LIBC_OBJS:=\
+src/libc/stdlib/abort.o \
 src/libc/string/memcmp.o \
 src/libc/string/memcpy.o \
 src/libc/string/memmove.o \
 src/libc/string/memset.o \
 src/libc/string/strlen.o \
 
+# all libc objects
 LIBC_OBJS:=\
-$(FREE_OBJS) \
+$(FREE_LIBC_OBJS) \
+$(HOSTED_LIBC_OBJS) \
 
 LIBC_HEADERS:=\
-src/libc/include/string.h
+src/libc/include/errno.h \
+src/libc/include/string.h \
+src/libc/include/stdlib.h \
 
-LIBK_OBJS:=$(FREE_OBJS:.o=.libk.o)
+LIBC_SYS_HEADERS:=\
+src/libc/include/sys/cdefs.h \
+
+LIBK_OBJS:=$(FREE_LIBC_OBJS:.o=.libk.o)
 
 # Architecture-specific kernel components
 KERNEL_ARCH_OBJS:=\
@@ -85,8 +95,7 @@ $(KERNEL_HEADERS) \
 
 # INSTALL ORDER:
 # - Copy headers to sysroot/usr/include/
-# - Compile libc source
-# - Archive libc source in sysroot/usr/lib/libc.a
+# - Compile libc source into libraries and move to /sysroot/usr/lib
 # - Compile kernel modules using sysroot/ resources
 # - Link kernel with global constructors in os-0.bin
 # - Move boot resources (grub.cfg, efi.img) to sysroot/
@@ -94,10 +103,13 @@ $(KERNEL_HEADERS) \
 
 install-headers:
 	mkdir -pv $(INCLUDE_DIR)
-	cp -v $(ALL_HEADERS) $(INCLUDE_DIR)
+	cp -v $(LIBC_HEADERS) $(INCLUDE_DIR)
+	cp -v $(KERNEL_HEADERS) $(INCLUDE_DIR)
+	mkdir -pv $(INCLUDE_DIR)/sys
+	cp -v $(LIBC_SYS_HEADERS) $(INCLUDE_DIR)/sys
 
-libc.a: $(FREE_OBJS)
-	$(AR) rcs $@ $(FREE_OBJS)
+libc.a: $(FREE_LIBC_OBJS)
+	$(AR) rcs $@ $(FREE_LIBC_OBJS)
 
 libg.a:
 	$(AR) rcs $@

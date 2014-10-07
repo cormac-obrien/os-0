@@ -47,5 +47,6 @@ void kernel_early() {
 }
 
 void kernel_main() {
-    kernel_puts("Hello, world!\n");
+    kernel_puts("OS-0 Pre-Alpha build.\n");
+    kernel_puts("System booted successfully.");
 }
