@@ -35,6 +35,9 @@ src/libc/string/strlen.o \
 LIBC_OBJS:=\
 $(FREE_OBJS) \
 
+LIBC_HEADERS:=\
+src/libc/include/string.h
+
 LIBK_OBJS:=$(FREE_OBJS:.o=.libk.o)
 
 # Architecture-specific kernel components
@@ -44,7 +47,15 @@ $(ARCH_DIR)/boot.o \
 # All kernel components
 KERNEL_OBJS:=\
 $(KERNEL_ARCH_OBJS) \
-src/kernel/kernel.o
+src/kernel/kernel.o \
+src/kernel/vga/vga_color.o \
+src/kernel/vga/vga_cell.o \
+src/kernel/vga/vga_init.o \
+src/kernel/vga/vga_putcell.o \
+src/kernel/vga/vga_setcolor.o \
+
+KERNEL_HEADERS:=\
+src/kernel/include/vga.h
 
 # Objects to be linked into the final kernel
 OBJ_LINK_LIST:=\
@@ -64,6 +75,10 @@ $(CRTN_OBJ) \
 
 BINARIES:=libc.a libg.a libk.a
 
+ALL_HEADERS:=\
+$(LIBC_HEADERS) \
+$(KERNEL_HEADERS) \
+
 .PHONY: clean install install-headers iso
 
 # INSTALL TARGETS ==============================================================
@@ -79,7 +94,7 @@ BINARIES:=libc.a libg.a libk.a
 
 install-headers:
 	mkdir -pv $(INCLUDE_DIR)
-	cp -v src/libc/include/string.h $(INCLUDE_DIR)
+	cp -v $(ALL_HEADERS) $(INCLUDE_DIR)
 
 libc.a: $(FREE_OBJS)
 	$(AR) rcs $@ $(FREE_OBJS)
