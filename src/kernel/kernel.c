@@ -60,27 +60,30 @@ void vga_putcell(const char c, const uint8_t color, const size_t row, const size
 }
 
 void kernel_putchar(const char c) {
-    vga_putcell(c, _vga_color, _vga_row, _vga_col);
-    if(++_vga_col == VGA_COLS) {
+    switch(c) {
+        case '\n':
+            _vga_row += 1;
+            _vga_col = 0;
+            break;
+        default:
+            vga_putcell(c, _vga_color, _vga_row, _vga_col);
+            _vga_col += 1;
+            break;
+    }
+
+    if(_vga_col == VGA_COLS) {
         _vga_col = 0;
-        if(++_vga_row == VGA_ROWS) {
-            _vga_row = 0;
-        }
+        _vga_row += 1;
+    }
+
+    if(_vga_row == VGA_ROWS) {
+        _vga_row = 0;
     }
 }
 
 void kernel_puts(const char * const str) {
     for(size_t i = 0; i < strlen(str); ++i) {
-        switch(str[i]) {
-            case '\n':
-                if(++_vga_row == VGA_ROWS) {
-                    _vga_row = 0;
-                }
-                _vga_col = 0;
-                break;
-            default:
-                kernel_putchar(str[i]);
-        }
+        kernel_putchar(str[i]);
     }
 }
 
