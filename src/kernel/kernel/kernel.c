@@ -6,6 +6,8 @@
 #include <multiboot.h>
 #include <vga.h>
 
+#define CKFLAG(flags, bit) ((flags) & (1 << bit))
+
 void kernel_putchar(const char c) {
     switch(c) {
         case '\t':
@@ -42,15 +44,6 @@ void kernel_early() {
     vga_init();
 }
 
-void kernel_main(struct multiboot_info *mbd, unsigned int magic) {
-    kernel_puts("OS-0 Pre-Alpha build booted successfully.\n");
-
-    kernel_puts("Checking for 4K page boundary alignment...");
-    if(mbd->flags & ((uint32_t)1 << 1)) {
-        kernel_puts("Ok.\n");
-    } else {
-        kernel_puts("Failed.\n");
-    }
-
-    kernel_puts("Getting size of lower memory...");
+void kernel_main(unsigned long magic, unsigned long addr) {
+    printf("OS-0 Pre-Alpha build booted successfully.\n");
 }

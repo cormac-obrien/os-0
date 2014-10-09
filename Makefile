@@ -29,7 +29,14 @@ HOSTED_LIBC_OBJS:=\
 # libc objects with no system dependencies
 FREE_LIBC_OBJS:=\
 src/libc/stdio/printf.o \
+src/libc/stdio/puts.o \
 src/libc/stdlib/abort.o \
+src/libc/stdlib/abs.o \
+src/libc/stdlib/div.o \
+src/libc/stdlib/ldiv.o \
+src/libc/stdlib/lldiv.o \
+src/libc/stdlib/labs.o \
+src/libc/stdlib/llabs.o \
 src/libc/string/memcmp.o \
 src/libc/string/memcpy.o \
 src/libc/string/memmove.o \
@@ -43,6 +50,7 @@ $(HOSTED_LIBC_OBJS) \
 
 LIBC_HEADERS:=\
 src/libc/include/errno.h \
+src/libc/include/math.h \
 src/libc/include/stdio.h \
 src/libc/include/stdlib.h \
 src/libc/include/string.h \
