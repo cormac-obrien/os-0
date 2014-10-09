@@ -28,6 +28,7 @@ HOSTED_LIBC_OBJS:=\
 
 # libc objects with no system dependencies
 FREE_LIBC_OBJS:=\
+src/libc/stdio/printf.o \
 src/libc/stdlib/abort.o \
 src/libc/string/memcmp.o \
 src/libc/string/memcpy.o \
@@ -42,8 +43,9 @@ $(HOSTED_LIBC_OBJS) \
 
 LIBC_HEADERS:=\
 src/libc/include/errno.h \
-src/libc/include/string.h \
+src/libc/include/stdio.h \
 src/libc/include/stdlib.h \
+src/libc/include/string.h \
 
 LIBC_SYS_HEADERS:=\
 src/libc/include/sys/cdefs.h \
@@ -57,7 +59,7 @@ $(ARCH_DIR)/boot.o \
 # All kernel components
 KERNEL_OBJS:=\
 $(KERNEL_ARCH_OBJS) \
-src/kernel/kernel.o \
+src/kernel/kernel/kernel.o \
 src/kernel/vga/vga_color.o \
 src/kernel/vga/vga_cell.o \
 src/kernel/vga/vga_init.o \
@@ -65,7 +67,9 @@ src/kernel/vga/vga_putcell.o \
 src/kernel/vga/vga_setcolor.o \
 
 KERNEL_HEADERS:=\
-src/kernel/include/vga.h
+src/kernel/include/kernel.h \
+src/kernel/include/multiboot.h \
+src/kernel/include/vga.h \
 
 # Objects to be linked into the final kernel
 OBJ_LINK_LIST:=\
@@ -131,7 +135,7 @@ iso: install
 	grub-mkrescue -o os-0.iso sysroot/
 
 os-0.bin: $(OBJ_LINK_LIST)
-	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^
+	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L sysroot/usr/lib -lk -lg -lc
 
 # GENERIC TARGETS ==============================================================
 
