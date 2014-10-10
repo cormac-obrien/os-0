@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -40,10 +41,46 @@ void kernel_puts(const char * const str) {
     }
 }
 
-void kernel_early() {
+static uint32_t _kernel_magic;
+static uint32_t _kernel_mbi_addr;
+void kernel_early(uint32_t magic, uint32_t addr) {
+    _kernel_magic = magic;
+    _kernel_mbi_addr = addr;
     vga_init();
 }
 
-void kernel_main(unsigned long magic, unsigned long addr) {
+void kernel_main() {
     printf("OS-0 Pre-Alpha build booted successfully.\n");
+    printf("Checking magic number...");
+
+    if(_kernel_magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        printf("Failed (got %x)", _kernel_magic);
+        return;
+    }
+
+    vga_setcolor(vga_color(C_GRN, C_BLK));
+    printf("OK\n");
+    vga_setcolor(vga_color(C_LGRY, C_BLK));
+
+    multiboot_info_t *mbi = (multiboot_info_t *)_kernel_mbi_addr;
+    printf("Flags = %x\n", mbi->flags);
+
+    if(CKFLAG(mbi->flags, 0)) {
+        vga_setcolor(vga_color(C_GRN, C_BLK));
+        printf("\nMEMORY\n");
+        vga_setcolor(vga_color(C_LGRY, C_BLK));
+        printf("  Available lower memory = %x KiB\n", mbi->mem_lower);
+        printf("  Available upper memory = %x KiB\n", mbi->mem_upper);
+    } else {
+        vga_setcolor(vga_color(C_RED, C_BLK));
+        printf("\nFailed to get memory stats.\n");
+        vga_setcolor(vga_color(C_LGRY, C_BLK));
+    }
+
+    if(CKFLAG(mbi->flags, 1)) {
+        vga_setcolor(vga_color(C_GRN, C_BLK));
+        printf("\nBOOT DEVICE\n");
+        vga_setcolor(vga_color(C_LGRY, C_BLK));
+        printf("  Got ID %x.\n", mbi->boot_device);
+    }
 }

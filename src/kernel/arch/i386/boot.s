@@ -12,7 +12,7 @@ align 4
 
 section .boot_stack
 stack_bottom:
-times 16384 db 0 ; allocate 16 KiB for stack
+times 0x4000 db 0 ; allocate 16 KiB for stack
 stack_top:
 
 section .text
@@ -20,17 +20,17 @@ global _start
 _start:
     mov esp, stack_top
 
+    push word 0
+    add esp, 4
+
+    push ebx ; address of multiboot_info_t
+    push eax ; magic number (0x2badb002)
+
     extern kernel_early
     call kernel_early
 
     extern _init
     call _init
-
-    push dword 0
-    add esp, 4
-
-    push ebx
-    push eax
 
     extern kernel_main
     call kernel_main

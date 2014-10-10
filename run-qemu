@@ -1,3 +1,3 @@
 #!/bin/sh
 
-qemu-system-i386 -cdrom os-0.iso
+qemu-system-i386 -m 256 -cdrom os-0.iso

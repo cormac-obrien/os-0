@@ -1,6 +1,8 @@
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h> /* for size_t */
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,6 +28,16 @@ int printf(const char * const format, ...) {
 
                 } else if(format[i] == 's') {
                     kernel_puts(va_arg(args, const char * const));
+
+                } else if(format[i] == 'x') {
+                    const uint32_t x = va_arg(args, uint32_t);
+                    const char * const hex = "0123456789abcdef";
+
+                    kernel_puts("0x");
+                    for(size_t i = 8; i > 0; --i) {
+                        /* right shift by i*4 bits and mask lower 4 */
+                        kernel_putchar((char)hex[(x >> ((i - 1) * 4)) & 0xf]);
+                    }
 
                 } else {
                     abort();
