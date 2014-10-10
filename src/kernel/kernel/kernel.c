@@ -56,38 +56,36 @@ void kernel_main() {
     printf("Checking magic number...");
 
     if(_kernel_magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-        printf("Failed (got %x)", _kernel_magic);
+        printf("Failed (got 0x%x)", _kernel_magic);
         return;
     }
+
+    multiboot_info_t *mbi = (multiboot_info_t *)_kernel_mbi_addr;
 
     vga_setcolor(vga_color(C_GRN, C_BLK));
     printf("OK\n");
     vga_setcolor(vga_color(C_LGRY, C_BLK));
 
-    multiboot_info_t *mbi = (multiboot_info_t *)_kernel_mbi_addr;
-    printf("Flags = %x\n", mbi->flags);
-
-    if(CKFLAG(mbi->flags, 0)) {
+    if(CKFLAG(mbi->flags, 6)) {
         vga_setcolor(vga_color(C_GRN, C_BLK));
-        printf("\nMEMORY\n");
+        printf("\nMEMORY MAP\n");
         vga_setcolor(vga_color(C_LGRY, C_BLK));
-        printf("  Available lower memory = %x KiB\n", mbi->mem_lower);
-        printf("  Available upper memory = %x KiB\n", mbi->mem_upper);
-    } else {
-        vga_setcolor(vga_color(C_RED, C_BLK));
-        printf("\nFailed to get memory stats.\n");
-        vga_setcolor(vga_color(C_LGRY, C_BLK));
-    }
 
-    if(CKFLAG(mbi->flags, 1)) {
-        vga_setcolor(vga_color(C_GRN, C_BLK));
-        printf("\nBOOT DEVICE\n");
-        vga_setcolor(vga_color(C_LGRY, C_BLK));
-        printf("  Got ID %x.\n", mbi->boot_device);
-    }
+        printf("  Beginning search for memory blocks.\n");
 
-    vga_setcolor(vga_color(C_GRN, C_BLK));
-    printf("\nBOOT DEVICE\n");
-    vga_setcolor(vga_color(C_LGRY, C_BLK));
-    printf("  Kernel ends at %x.\n", &end_kernel);
+        typedef multiboot_memory_map_t memmap_t;
+
+        /* It looks worse than it is, I swear */
+        const memmap_t *mmap;
+        for(mmap = (memmap_t *)mbi->mmap_addr;
+                (uint32_t)mmap < mbi->mmap_addr + mbi->mmap_length;
+                mmap = (memmap_t *)((uint32_t)mmap + mmap->size + sizeof(mmap->size))) {
+
+            /* TODO: massive kludge right here */
+            printf("  Address: 0x%x | Length: 0x%x | Type: 0x%x\n",
+                    mmap->addr & 0xffffffff,
+                    mmap->len,
+                    mmap->type);
+        }
+    }
 }
