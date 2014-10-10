@@ -31,12 +31,6 @@ FREE_LIBC_OBJS:=\
 src/libc/stdio/printf.o \
 src/libc/stdio/puts.o \
 src/libc/stdlib/abort.o \
-src/libc/stdlib/abs.o \
-src/libc/stdlib/div.o \
-src/libc/stdlib/ldiv.o \
-src/libc/stdlib/lldiv.o \
-src/libc/stdlib/labs.o \
-src/libc/stdlib/llabs.o \
 src/libc/string/memcmp.o \
 src/libc/string/memcpy.o \
 src/libc/string/memmove.o \
@@ -49,8 +43,6 @@ $(FREE_LIBC_OBJS) \
 $(HOSTED_LIBC_OBJS) \
 
 LIBC_HEADERS:=\
-src/libc/include/errno.h \
-src/libc/include/math.h \
 src/libc/include/stdio.h \
 src/libc/include/stdlib.h \
 src/libc/include/string.h \
@@ -139,11 +131,11 @@ install: install-headers install-libs os-0.bin
 	cp -v os-0.bin $(BOOT_DIR)/
 	cp -v res/iso/grub.cfg $(BOOT_DIR)/grub/
 
-iso: install
+iso: clean install
 	grub-mkrescue -o os-0.iso sysroot/
 
 os-0.bin: $(OBJ_LINK_LIST)
-	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L sysroot/usr/lib -lk -lg -lc
+	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L sysroot/usr/lib -lk
 
 # GENERIC TARGETS ==============================================================
 

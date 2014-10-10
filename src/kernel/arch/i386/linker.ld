@@ -21,5 +21,6 @@ SECTIONS {
         *(COMMON)
         *(.bss)
         *(.boot_stack)
+        end_kernel = .;
     }
 }

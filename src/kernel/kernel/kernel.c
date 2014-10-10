@@ -9,13 +9,15 @@
 
 #define CKFLAG(flags, bit) ((flags) & (1 << bit))
 
+extern uint32_t end_kernel; /* see src/kernel/arch/<arch>/linker.ld */
+
 void kernel_putchar(const char c) {
     switch(c) {
         case '\t':
             _vga_col += 8;
             break;
-        case '\n':
         case '\r': /* FALLTHROUGH */
+        case '\n':
             _vga_row += 1;
             _vga_col = 0;
             break;
@@ -83,4 +85,9 @@ void kernel_main() {
         vga_setcolor(vga_color(C_LGRY, C_BLK));
         printf("  Got ID %x.\n", mbi->boot_device);
     }
+
+    vga_setcolor(vga_color(C_GRN, C_BLK));
+    printf("\nBOOT DEVICE\n");
+    vga_setcolor(vga_color(C_LGRY, C_BLK));
+    printf("  Kernel ends at %x.\n", &end_kernel);
 }
