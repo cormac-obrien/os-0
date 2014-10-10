@@ -59,7 +59,10 @@ $(ARCH_DIR)/boot.o \
 # All kernel components
 KERNEL_OBJS:=\
 $(KERNEL_ARCH_OBJS) \
-src/kernel/kernel/kernel.o \
+src/kernel/kernel/kernel_early.o \
+src/kernel/kernel/kernel_main.o \
+src/kernel/kernel/kernel_putchar.o \
+src/kernel/kernel/kernel_puts.o \
 src/kernel/vga/vga_color.o \
 src/kernel/vga/vga_cell.o \
 src/kernel/vga/vga_init.o \

@@ -30,11 +30,13 @@ int printf(const char * const format, ...) {
                     kernel_puts(va_arg(args, const char * const));
 
                 } else if(format[i] == 'x') {
+                    // bool leading = true;
                     const uint64_t x = va_arg(args, uint64_t);
                     const char * const hex = "0123456789abcdef";
 
                     for(size_t i = 8; i > 0; --i) {
-                        kernel_putchar((char)hex[(x >> ((i - 1) * 4)) & 0xf]);
+                        const char c = hex[(x >> ((i - 1) * 4)) & 0xf];
+                        kernel_putchar(c);
                     }
                 
                 } else {
