@@ -17,8 +17,6 @@ OS-0 aims to be a minimalist Unix-like system for Intel x86 architectures.
 Build and run OS-0 by navigating to the `src/` directory and running
 
 ```
-#!shell
-
 $ make iso
 ```
 
@@ -30,7 +28,5 @@ you've built the ISO and have QEMU installed.
 The binaries and object files can then be removed with
 
 ```
-#!shell
-
 $ make clean
 ```
