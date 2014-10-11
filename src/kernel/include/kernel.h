@@ -14,6 +14,8 @@ uint32_t _kernel_magic;
 uint32_t _kernel_mbi_addr;
 
 uint32_t kernel_alloc_pframe();
+void     kernel_free_pframe(const uint32_t pframe);
+
 void     kernel_early(const uint32_t magic, const uint32_t addr);
 void     kernel_main(void);
 void     kernel_putchar(const char c);

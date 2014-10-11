@@ -35,6 +35,9 @@ void kernel_main() {
     const mb_mmap_t *mmap = (mb_mmap_t *)mbi->mmap_addr;
     const uint32_t mmap_end = mbi->mmap_addr + mbi->mmap_length;
 
+    /* keep track of how many pframes have been written */
+    uint32_t next_pframe = 0;
+
     while((uint32_t)mmap < mmap_end) {
         /* type 1 segments are the only ones available for our use */
         if(mmap->type != 1) {
@@ -42,8 +45,8 @@ void kernel_main() {
             continue;
         }
 
-        /* if the segment starts at 1M, it contains the kernel and we need   *
-         * to skip that memory so we don't overwrite our OS.                 */
+        /* if the segment starts at 1M, it contains the kernel. we need to   *
+         * skip that memory so we don't overwrite our OS.                    */
         const uint32_t offset =
             (mmap->addr == _1M) ?
                 (uint32_t)(&kernel_pframe_stack_ptr) : 0;
@@ -64,8 +67,8 @@ void kernel_main() {
         printf("Last pframe: %x | ", last_pframe);
         printf("Total pframes: %x\n\n", num_pframes);
 
-        for(uint32_t i = 0; i < num_pframes; ++i) {
-            (&kernel_pframe_stack_ptr)[i] = first_pframe + (_4K * i);
+        for(; next_pframe < num_pframes; ++next_pframe) {
+            (&kernel_pframe_stack_ptr)[next_pframe] = first_pframe + (_4K * next_pframe);
         }
 
         /* Move pointer to next block */
