@@ -2,13 +2,14 @@
 
 OS-0 aims to be a minimalist Unix-like system for Intel x86 architectures.
 
-The operating system is currently nothing more than a skeleton, but it will
-boot successfully under GRUB2 and should work under any multiboot-compliant
-bootloader, though others have not been tested.
+### Features ###
+- 16-color, 80x25-character VGA text mode
+- Multiboot-based memory map detection
+- Stack-based page frame allocation for up to 4GiB of addressable memory
 
-### Dependencies###
+### Dependencies ###
 
-- A GCC cross-compiler toolchain for i686-elf
+- A GCC cross-compiler toolchain (gcc and ld) for i686-elf
 - QEMU (for the `run-qemu` script)
 
 ### Building OS-0 ###

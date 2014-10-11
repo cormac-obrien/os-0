@@ -21,11 +21,6 @@ SECTIONS {
         *(COMMON)
         *(.bss)
         *(.boot_stack)
-        kernel_end_ptr = .;
-    }
-
-    .skip BLOCK(4K) : ALIGN(4K) {
-        /* pointer to first free 4K block */
-        first_free_page_ptr = .;
+        kernel_pframe_stack_ptr = .;
     }
 }
