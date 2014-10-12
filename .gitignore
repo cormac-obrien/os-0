@@ -1,3 +1,4 @@
+.bochsrc
 run-qemu
 sysroot/
 *.a

@@ -9,6 +9,7 @@ extern uint32_t kernel_pframe_stack_marker;
 
 void kernel_init_pframe_stack(const mb_info_t * const mbi) {
     _kernel_free_pages = 0;
+    _kernel_pframe_stack_ptr = &kernel_pframe_stack_marker;
 
     const mb_mmap_t *kernel_mmap = NULL;
 
@@ -49,7 +50,7 @@ void kernel_init_pframe_stack(const mb_info_t * const mbi) {
                 ((mmap->addr + mmap->len) % PAGE_SIZE + PAGE_SIZE);
 
         for(uint32_t next_pframe = last_pframe;
-            next_pframe >= (uint32_t)_kernel_pframe_stack_ptr;
+            next_pframe >= (uint32_t)_kernel_pframe_stack_ptr + 100 * PAGE_SIZE;
             next_pframe -= PAGE_SIZE
         ) {
             *_kernel_pframe_stack_ptr = next_pframe;

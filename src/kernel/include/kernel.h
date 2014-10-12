@@ -15,14 +15,16 @@ typedef multiboot_memory_map_t mb_mmap_t;
 
 size_t _kernel_free_pages;
 
-uint32_t _kernel_magic;
-uint32_t _kernel_mbi_addr;
+uint32_t  _kernel_magic;
+uint32_t  _kernel_mbi_addr;
+uint32_t *_kernel_page_directory;
 uint32_t *_kernel_pframe_stack_ptr;
 
 uint32_t kernel_alloc_pframe();
 void     kernel_free_pframe(const uint32_t pframe);
 
 void     kernel_early(const uint32_t magic, const uint32_t addr);
+void     kernel_enable_paging();
 void     kernel_init_pframe_stack(const mb_info_t * const mbi);
 void     kernel_main(void);
 void     kernel_putchar(const char c);

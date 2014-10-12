@@ -27,4 +27,24 @@ void kernel_main() {
     if(!CKFLAG(mbi->flags, 6)) return; /* gotta get that mmap */
 
     kernel_init_pframe_stack(mbi);
+
+    const uint32_t page_directory_addr = kernel_alloc_pframe();
+    printf("Page directory at 0x%x.\n", page_directory_addr);
+    _kernel_page_directory = (uint32_t *)page_directory_addr;
+    for(size_t i = 0; i < 1024; ++i) {
+        _kernel_page_directory[i] = 0 | 2;
+    }
+
+    const uint32_t page_table_addr = kernel_alloc_pframe();
+    printf("First page table at 0x%x.\n", page_table_addr);
+    uint32_t * const page_table = (uint32_t *)page_table_addr;
+    for(size_t i = 0; i < 1024; ++i) {
+        page_table[i] = kernel_alloc_pframe() | 3;
+    }
+
+    _kernel_page_directory[0] = (uint32_t)page_table;
+    _kernel_page_directory[0] |= 3;
+
+    kernel_enable_paging();
+
 }

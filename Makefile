@@ -55,11 +55,14 @@ LIBK_OBJS:=$(FREE_LIBC_OBJS:.o=.libk.o)
 # Architecture-specific kernel components
 KERNEL_ARCH_OBJS:=\
 $(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/kernel_enable_paging.o \
 
 # All kernel components
 KERNEL_OBJS:=\
 $(KERNEL_ARCH_OBJS) \
+src/kernel/kernel/kernel_alloc_pframe.o \
 src/kernel/kernel/kernel_early.o \
+src/kernel/kernel/kernel_free_pframe.o \
 src/kernel/kernel/kernel_init_pframe_stack.o \
 src/kernel/kernel/kernel_main.o \
 src/kernel/kernel/kernel_putchar.o \
