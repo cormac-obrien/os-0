@@ -7,7 +7,9 @@ uint32_t kernel_alloc_pframe(void) {
         abort();
     }
 
-    pframe_address = (&kernel_pframe_stack_ptr)[kernel_free_pages];
+    const uint32_t pframe_address = *_kernel_pframe_stack_ptr;
+    _kernel_pframe_stack_ptr--;
     _kernel_free_pages -= 1;
+
     return pframe_address;
 }

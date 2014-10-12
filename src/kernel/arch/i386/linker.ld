@@ -21,6 +21,6 @@ SECTIONS {
         *(COMMON)
         *(.bss)
         *(.boot_stack)
-        kernel_pframe_stack_ptr = .;
+        kernel_pframe_stack_marker = .;
     }
 }

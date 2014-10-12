@@ -60,6 +60,7 @@ $(ARCH_DIR)/boot.o \
 KERNEL_OBJS:=\
 $(KERNEL_ARCH_OBJS) \
 src/kernel/kernel/kernel_early.o \
+src/kernel/kernel/kernel_init_pframe_stack.o \
 src/kernel/kernel/kernel_main.o \
 src/kernel/kernel/kernel_putchar.o \
 src/kernel/kernel/kernel_puts.o \
