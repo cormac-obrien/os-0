@@ -1,3 +1,4 @@
+run-qemu
 sysroot/
 *.a
 *.bin

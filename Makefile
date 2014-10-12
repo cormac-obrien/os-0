@@ -135,11 +135,15 @@ install: install-headers install-libs os-0.bin
 	cp -v os-0.bin $(BOOT_DIR)/
 	cp -v res/iso/grub.cfg $(BOOT_DIR)/grub/
 
-iso: clean install
+iso: clean install run-qemu
 	grub-mkrescue -o os-0.iso sysroot/
 
 os-0.bin: $(OBJ_LINK_LIST)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L sysroot/usr/lib -lk
+
+run-qemu:
+	echo -e "#!/bin/sh\n\nqemu-system-i386 -m 128 -cdrom os-0.iso" >> run-qemu
+	chmod +x run-qemu
 
 # GENERIC TARGETS ==============================================================
 
@@ -155,5 +159,5 @@ os-0.bin: $(OBJ_LINK_LIST)
 # UTILITY TARGETS ==============================================================
 
 clean:
-	rm -f os-0.bin $(OBJS_FOR_DELETION) *.iso *.a
+	rm -f os-0.bin $(OBJS_FOR_DELETION) *.iso *.a run-qemu
 	rm -rf sysroot/
