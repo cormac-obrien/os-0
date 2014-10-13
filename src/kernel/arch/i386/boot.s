@@ -16,26 +16,51 @@ times 0x4000 db 0 ; allocate 16 KiB for stack
 stack_top:
 
 section .text
+
 global _start
+extern kernel_early
+extern _init
+extern kernel_main
 _start:
     mov esp, stack_top
 
-    push word 0
-    add esp, 4
-
-    push ebx ; address of multiboot_info_t
+    push ebx ; address of mb_info_t
     push eax ; magic number (0x2badb002)
 
-    extern kernel_early
     call kernel_early
-
-    extern _init
     call _init
 
-    extern kernel_main
-    call kernel_main
+    ; check for cpuid availability
+    pushfd
+    pop eax
+    mov ecx, eax
+    xor eax, 1 << 21
+    push eax
+    popfd
+    pushfd
+    pop eax
+    push ecx
+    popfd
+    xor eax, ecx
+    jz .hang
+
+    ; check for extended cpuid functionality
+    mov eax, 0x80000000
+    cpuid
+    cmp eax, 0x80000001
+    jb .hang
+
+    ; check for long mode support
+    mov eax, 0x80000001
+    cpuid
+    test edx, 1 << 29
+    jz .hang
+
+    call   kernel_main
     
     cli
 .hang:
     hlt
     jmp .hang
+
+poll_cpuid:

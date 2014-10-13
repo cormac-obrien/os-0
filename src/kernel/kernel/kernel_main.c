@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,8 +7,6 @@
 #include <kernel.h>
 #include <multiboot.h>
 
-#define _4K (0x1000)
-#define _1M (0x100000)
 #define CKFLAG(flags, bit) ((flags) & (1 << bit))
 
 void kernel_main() {

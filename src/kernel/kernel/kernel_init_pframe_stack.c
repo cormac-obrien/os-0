@@ -14,9 +14,9 @@ void kernel_init_pframe_stack(const mb_info_t * const mbi) {
     const mb_mmap_t *kernel_mmap = NULL;
 
     const mb_mmap_t *mmap = (mb_mmap_t *)mbi->mmap_addr;
-    const uint32_t mmap_end_addr = mbi->mmap_addr + mbi->mmap_length;
+    const uint64_t mmap_end_addr = mbi->mmap_addr + mbi->mmap_length;
 
-    while((uint32_t)mmap < mmap_end_addr) {
+    while((uint64_t)mmap < mmap_end_addr) {
         if(mmap->type == 1) {
             if(mmap->addr == 0x100000) { /* This block has the kernel. */
                 kernel_mmap = mmap;
