@@ -1,3 +1,5 @@
+.bochsdebug
+.bochslog
 .bochsrc
 run-qemu
 sysroot/

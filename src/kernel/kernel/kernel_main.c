@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <kernel.h>
@@ -38,8 +39,10 @@ void kernel_main() {
     const uint32_t page_table_addr = kernel_alloc_pframe();
     printf("First page table at 0x%x.\n", page_table_addr);
     uint32_t * const page_table = (uint32_t *)page_table_addr;
+    uint32_t address = 0;
     for(size_t i = 0; i < 1024; ++i) {
-        page_table[i] = kernel_alloc_pframe() | 3;
+        page_table[i] = address | 3;
+        address += 0x1000;
     }
 
     _kernel_page_directory[0] = (uint32_t)page_table;
