@@ -2,10 +2,12 @@
 
 OS-0 aims to be a minimalist Unix-like system for Intel x86 architectures.
 
-### Features ###
-- 16-color, 80x25-character VGA text mode
-- Multiboot-based memory map detection
-- Stack-based page frame allocation for up to 4GiB of addressable memory
+### Features & Goals ###
+- [x] 16-color, 80x25-character VGA text mode
+- [x] Multiboot-based memory map detection
+- [x] Stack-based page frame allocation
+- [x] Paging
+- [ ] Keyboard interrupt handling
 
 ### Dependencies ###
 
@@ -18,15 +20,18 @@ Build and run OS-0 by navigating to the `src/` directory and running
 
 ```
 $ make iso
+$ ./run-qemu
 ```
 
-I would strongly recommend against booting this on the metal as it hasn't
-undergone much bug testing yet, but in theory it should work. It boots and runs
-successfully on QEMU, and the `run-qemu` script will boot the system assuming
-you've built the ISO and have QEMU installed.
-
-The binaries and object files can then be removed with
+Binaries and object files can then be cleaned up with
 
 ```
 $ make clean
 ```
+
+If you want, you can burn the ISO to a disc and boot with that, but I haven't
+even tested this on the metal yet, so I would strongly recommend you not do so.
+
+### LICENSE ###
+OS-0 is freely available under the MIT license (see LICENSE.txt for more
+information). Go crazy.

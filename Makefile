@@ -142,7 +142,7 @@ iso: clean install run-qemu
 	grub-mkrescue -o os-0.iso sysroot/
 
 os-0.bin: $(OBJ_LINK_LIST)
-	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L sysroot/usr/lib -lk
+	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L $(LIB_DIR) -lk
 
 run-qemu:
 	echo -e "#!/bin/sh\n\nqemu-system-i386 -m 128 -cdrom os-0.iso" >> run-qemu
