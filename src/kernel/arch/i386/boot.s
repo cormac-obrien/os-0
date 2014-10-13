@@ -63,4 +63,49 @@ _start:
     hlt
     jmp .hang
 
-poll_cpuid:
+check_a20:
+    pushf
+    push ds
+    push es
+    push di
+    push si
+
+    cli
+
+    xor ax, ax
+    mov es, ax
+    mov di, 0x0500
+
+    mov ax, 0xffff
+    mov ds, ax
+    mov si, 0x510
+
+    mov al, byte [es:di]
+    push eax
+
+    mov al, byte [ds:si]
+    push eax
+
+    mov byte [es:di], 0x00
+    mov byte [ds:si], 0xff
+
+    cmp byte [es:di], 0xff
+
+    pop eax
+    mov byte [ds:si], al
+
+    pop eax
+    mov byte [es:di], al
+
+    mov ax, 0
+    je check_a20_finish
+
+    mov ax, 1
+
+check_a20_finish:
+    pop si
+    pop di
+    pop es
+    pop ds
+    popf
+    ret

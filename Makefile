@@ -145,7 +145,7 @@ os-0.bin: $(OBJ_LINK_LIST)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L $(LIB_DIR) -lk
 
 run-qemu:
-	echo -e "#!/bin/sh\n\nqemu-system-i386 -m 128 -cdrom os-0.iso" >> run-qemu
+	echo -e "#!/bin/sh\n\nqemu-system-x86_64 -m 128 -cdrom os-0.iso" >> run-qemu
 	chmod +x run-qemu
 
 # GENERIC TARGETS ==============================================================
