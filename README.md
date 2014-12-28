@@ -33,5 +33,4 @@ If you want, you can burn the ISO to a disc and boot with that, but I haven't
 even tested this on the metal yet, so I would strongly recommend you not do so.
 
 ### LICENSE ###
-OS-0 is freely available under the MIT license (see LICENSE.txt for more
-information). Go crazy.
+OS-0 is distributed under the MIT license. See LICENSE.txt for the full text.
