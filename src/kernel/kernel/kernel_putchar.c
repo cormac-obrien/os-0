@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <kernel.h>
 #include <vga.h>
 
@@ -6,7 +8,6 @@ void kernel_putchar(const char c) {
         case '\t':
             _vga_col += 8;
             break;
-        case '\r': /* FALLTHROUGH */
         case '\n':
             _vga_row += 1;
             _vga_col = 0;
@@ -23,6 +24,12 @@ void kernel_putchar(const char c) {
     }
 
     if(_vga_row >= VGA_ROWS) {
+        memmove(_vga_buffer + VGA_COLS,
+                _vga_buffer,
+                2 * VGA_ROWS * 2 * VGA_COLS - 2 * VGA_COLS);
+        memset(_vga_buffer + VGA_COLS * (VGA_ROWS - 1),
+                0,
+                VGA_COLS * 2);
         _vga_row = 0;
     }
 }
