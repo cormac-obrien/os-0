@@ -8,9 +8,9 @@ BOOT_DIR:=sysroot/boot
 INCLUDE_DIR:=sysroot/usr/include
 LIB_DIR:=sysroot/usr/lib
 
-AR:=$(X86)-ar
-CC:=$(X86)-gcc
-LD:=$(X86)-ld
+AR:=$(ARCH)-ar
+CC:=$(ARCH)-gcc
+LD:=$(ARCH)-ld
 
 # Compiler and linker settings
 CFLAGS:=\
