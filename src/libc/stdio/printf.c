@@ -22,7 +22,7 @@ int printf(const char * const format, ...) {
 
     for(size_t i = 0; i < strlen(format); ++i) {
         if(format[i] == '%') {
-            if(++i < fmt_len)
+            if(++i > fmt_len)
                 return -1;
 
             if(format[i] == '%') {
@@ -35,8 +35,8 @@ int printf(const char * const format, ...) {
                 puts(va_arg(args, const char * const));
 
             } else if(format[i] == 'x') {
-                // bool leading = true;
-                const uint64_t x = va_arg(args, uint64_t);
+                kernel_puts("0x");
+                const uint32_t x = va_arg(args, uint32_t);
                 const char * const hex = "0123456789abcdef";
 
                 for(size_t i = 8; i > 0; --i) {

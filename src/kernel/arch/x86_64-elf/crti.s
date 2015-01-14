@@ -19,9 +19,13 @@
  ; IN THE SOFTWARE.
 
 section .init
-    pop ebp
-    ret
+global _init
+_init:
+    push rbp
+    mov rbp,rsp
 
 section .fini
-    pop ebp
-    ret
+global _fini
+_fini:
+    push rbp
+    mov rbp,rsp

@@ -19,9 +19,9 @@
  ; IN THE SOFTWARE.
 
 section .init
-    pop ebp
+    pop rbp
     ret
 
 section .fini
-    pop ebp
+    pop rbp
     ret
