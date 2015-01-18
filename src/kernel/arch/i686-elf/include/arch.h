@@ -27,20 +27,25 @@
 typedef uint32_t addr_t;
 
 typedef struct {
-    uint16_t baselo;
-    uint16_t select;
-    uint8_t  zero;
-    uint8_t  flags;
-    uint16_t basehi;
+    uint16_t limit;
+    uint32_t base;
+} __attribute((__packed__)) idt_ptr_t;
+
+typedef struct {
+    uint16_t offsetlo;
+    uint16_t selector;
+    uint8_t  mustzero;
+    uint8_t  typeattr;
+    uint16_t offsethi;
 } __attribute__((__packed__)) idt_entry_t;
 
 typedef struct {
     uint16_t limitlo;
     uint16_t baselo;
-    uint8_t basemid;
-    uint8_t access;
-    uint8_t granularity;
-    uint8_t basehi;
+    uint8_t  basemid;
+    uint8_t  access;
+    uint8_t  granularity;
+    uint8_t  basehi;
 } __attribute__((__packed__)) gdt_entry_t;
 
 #endif /* ARCH_H */

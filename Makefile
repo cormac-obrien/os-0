@@ -1,3 +1,5 @@
+MAKEFLAGS:=--quiet
+
 X86:=i686-elf
 
 ARCH:=$(X86)
@@ -15,12 +17,12 @@ LD:=$(ARCH)-ld
 # Compiler and linker settings
 CFLAGS:=\
 -ffreestanding \
--g \
 -isystem=usr/include \
 -masm=intel \
 -O2 \
 -std=gnu99 \
 -Wall \
+-Werror \
 -Wextra \
 --sysroot=sysroot/
 CPPFLAGS:=
@@ -67,6 +69,8 @@ LIBK_OBJS:=$(FREE_LIBC_OBJS:.o=.libk.o)
 # Architecture-specific kernel components
 KERNEL_ARCH_OBJS:=\
 $(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/isr.o \
 
 # All kernel components
 KERNEL_OBJS:=\
@@ -110,11 +114,11 @@ $(KERNEL_HEADERS) \
 # INSTALL TARGETS ==============================================================
 
 install-headers:
-	mkdir -pv $(INCLUDE_DIR)
-	cp -v $(LIBC_HEADERS) $(INCLUDE_DIR)
-	cp -v $(KERNEL_HEADERS) $(INCLUDE_DIR)
-	mkdir -pv $(INCLUDE_DIR)/sys
-	cp -v $(LIBC_SYS_HEADERS) $(INCLUDE_DIR)/sys
+	mkdir -p $(INCLUDE_DIR)
+	cp $(LIBC_HEADERS) $(INCLUDE_DIR)
+	cp $(KERNEL_HEADERS) $(INCLUDE_DIR)
+	mkdir -p $(INCLUDE_DIR)/sys
+	cp $(LIBC_SYS_HEADERS) $(INCLUDE_DIR)/sys
 
 libc.a: $(LIBC_OBJS)
 	$(AR) rcs $@ $(LIBC_OBJS)
@@ -126,20 +130,20 @@ libk.a: $(LIBK_OBJS)
 	$(AR) rcs $@ $(LIBK_OBJS)
 
 install-libs: $(BINARIES)
-	mkdir -pv $(LIB_DIR)
-	mv -v $(BINARIES) $(LIB_DIR)
+	mkdir -p $(LIB_DIR)
+	mv $(BINARIES) $(LIB_DIR)
 
 install: install-headers install-libs os-0.bin
-	mkdir -pv $(BOOT_DIR)/grub
-	cp -v res/iso/efi.img sysroot/
-	cp -v os-0.bin $(BOOT_DIR)/
-	cp -v res/iso/grub.cfg $(BOOT_DIR)/grub/
+	mkdir -p $(BOOT_DIR)/grub
+	cp res/iso/efi.img sysroot/
+	cp os-0.bin $(BOOT_DIR)/
+	cp res/iso/grub.cfg $(BOOT_DIR)/grub/
 
 os-0.bin: $(OBJ_LINK_LIST)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(LDFLAGS) $^ -L $(LIB_DIR) -lk
 
 iso: clean install run-qemu
-	grub-mkrescue -o os-0.iso sysroot/
+	grub-mkrescue -o os-0.iso sysroot/ > /dev/null
 
 run-qemu:
 	echo -e "#!/bin/sh\n\nqemu-system-i386 -m 128 -cdrom os-0.iso" >> run-qemu
@@ -151,7 +155,7 @@ run-qemu:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 %.o: %.s
-	nasm -felf $< -o $@
+	nasm -felf -Wall -Werror $< -o $@
 
 %.libk.o: %.c
 	$(CC) $(LIBK_CFLAGS) -c $< -o $@

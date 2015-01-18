@@ -36,34 +36,43 @@ stack_top:
 section .text
 global _start
 _start:
-    mov esp,stack_top
+  mov esp,stack_top
 
-    push ebx ; multiboot info struct
-    push eax ; magic number
+  push ebx ; multiboot info struct
+  push eax ; magic number
 
-    extern kernel_early
-    call   kernel_early
+  extern kernel_early
+  call   kernel_early
 
-    xor eax,eax ; get vendor string
-    cpuid
-    mov [cpu_vendor+0],ebx
-    mov [cpu_vendor+4],edx
-    mov [cpu_vendor+8],ecx
+  xor eax,eax ; get vendor string
+  cpuid
+  mov [cpu_vendor+0],ebx
+  mov [cpu_vendor+4],edx
+  mov [cpu_vendor+8],ecx
 
-    mov eax,1 ; get features
-    cpuid
-    mov [cpu_features],edx
+  mov eax,1 ; get features
+  cpuid
+  mov [cpu_features],edx
 
-    extern _init
-    call   _init
+  extern _init
+  call   _init
 
-    extern kernel_main
-    call   kernel_main
+  extern kernel_main
+  call   kernel_main
+
+  extern idt_setup
+  call idt_setup
+
+  lidt [idtr]
+
+  xchg bx,bx
+
+  int 0x0
     
-    cli
+  cli
 .hang:
-    hlt
-    jmp .hang
+  hlt
+  jmp .hang
 
 section .data
 
@@ -75,24 +84,26 @@ global cpu_features
 cpu_features:
 dd 0x00000000
 
-global idt
-idt:
+global gdtr
+gdtr:
+dw gdt.end - gdt - 1
+dd gdt
+dw 0
 
+global idtr
+idtr:
+dw idt.end - idt - 1
+dd idt
+dw 0
+
+section .gdt
 global gdt
 gdt:
-.null: ; null descriptor is unused, so we store a pointer to the gdt here
-    dw gdt.end - gdt - 1
-    dd gdt
-    dw 0
-.kcode:
-    times 2 dd 0
-    times 4 db 0
-.kdata:
-    times 2 dd 0
-    times 4 db 0
-.tss:
-    times 2 dd 0
-    times 4 db 0
+times 256 dq 0 ; each entry is 64 bits
 .end:
 
-resb 65536 - 1 - (gdt.end - gdt)
+section .idt
+global idt
+idt:
+times 256 dq 0 ; each entry is 64 bits
+.end:

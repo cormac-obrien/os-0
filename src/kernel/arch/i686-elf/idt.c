@@ -19,30 +19,27 @@
  * IN THE SOFTWARE.
  */
 
-ENTRY(_start)
-OUTPUT_FORMAT(elf32-i386)
+#include <arch.h>
 
-SECTIONS {
-    . = 1M;
+#include <stdio.h>
 
-    .text BLOCK(4K) : ALIGN(4K) {
-        *(.multiboot)
-        *(.text)
-    }
+extern idt_entry_t idt[32];
 
-    .rodata BLOCK(4K) : ALIGN(4K) {
-        *(.rodata)
-    }
+extern addr_t
+    isr0;
 
-    .data BLOCK(4K) : ALIGN(4K) {
-        *(.data)
-    }
+idt_entry_t idt_encode(addr_t offset, uint8_t typeattr, uint16_t selector) {
+    return (idt_entry_t) {
+        .offsethi = (uint16_t)(offset >> 16),
+        .offsetlo = (uint16_t)(offset & 0x0000ffff),
+        .selector = selector,
+        .typeattr = typeattr,
+        .mustzero = 0
+    };
+}
 
-    .bss BLOCK(4K) : ALIGN(4K) {
-        *(COMMON)
-        *(.bss)
-        *(.boot_stack)
-        *(.gdt)
-        *(.idt)
-    }
+void idt_setup() {
+    printf("IDT address: %x\n", (addr_t)idt);
+    printf("ISR0 address: %x\n", (addr_t)&isr0);
+    idt[0] = idt_encode((addr_t)&isr0, 0b10001110, 0x00);
 }
