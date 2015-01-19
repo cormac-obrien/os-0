@@ -69,6 +69,7 @@ LIBK_OBJS:=$(FREE_LIBC_OBJS:.o=.libk.o)
 # Architecture-specific kernel components
 KERNEL_ARCH_OBJS:=\
 $(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
 $(ARCH_DIR)/isr.o \
 

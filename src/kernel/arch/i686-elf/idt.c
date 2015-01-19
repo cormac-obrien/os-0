@@ -25,10 +25,13 @@
 
 extern idt_entry_t idt[32];
 
-extern addr_t
-    isr0;
+extern addr_t isr0;
 
-idt_entry_t idt_encode(addr_t offset, uint8_t typeattr, uint16_t selector) {
+idt_entry_t idt_encode(
+        addr_t offset,
+        uint8_t typeattr,
+        uint16_t selector
+        ) {
     return (idt_entry_t) {
         .offsethi = (uint16_t)(offset >> 16),
         .offsetlo = (uint16_t)(offset & 0x0000ffff),

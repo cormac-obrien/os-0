@@ -57,6 +57,19 @@ _start:
   extern _init
   call   _init
 
+  extern gdt_setup
+  call gdt_setup
+
+  lgdt [gdtr]
+  mov ax,0x10
+  mov ds,ax
+  mov es,ax
+  mov fs,ax
+  mov gs,ax
+  mov ss,ax
+  jmp 0x08:.far
+.far:
+
   extern kernel_main
   call   kernel_main
 
@@ -67,7 +80,7 @@ _start:
 
   xchg bx,bx
 
-  int 0x0
+  ;int 0x0
     
   cli
 .hang:

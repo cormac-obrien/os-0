@@ -21,4 +21,29 @@
 
 #include <arch.h>
 
-extern gdt_entry_t[256] gdt;
+#include <stdint.h>
+
+extern gdt_entry_t gdt[256];
+
+gdt_entry_t gdt_encode(
+        addr_t     offset,
+        uint32_t   length,
+        uint8_t    access,
+        uint8_t    granularity
+        ) {
+    return (gdt_entry_t) {
+        .offsetlo    = (uint16_t)(offset & 0xffff),
+        .offsetmd    = (uint8_t)(offset >> 16 & 0xff),
+        .offsethi    = (uint8_t)(offset >> 24 & 0xff),
+        .lengthlo    = (uint16_t)(length & 0xffff),
+        .granularity = (length >> 16 & 0x0f) | (granularity & 0xf0),
+        .access      = access
+    };
+}
+
+void gdt_setup() {
+    gdt[1] = gdt_encode(0, UINT32_MAX, 0b10011010, 0b11000000);
+    gdt[2] = gdt_encode(0, UINT32_MAX, 0b10010010, 0b11000000);
+    gdt[3] = gdt_encode(0, UINT32_MAX, 0b11111010, 0b11000000);
+    gdt[4] = gdt_encode(0, UINT32_MAX, 0b11110010, 0b11000000);
+}
